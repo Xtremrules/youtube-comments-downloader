@@ -26,6 +26,14 @@
       <button :disabled="loading" class="form__button yt-uix-button yt-uix-button-size-default yt-uix-button-subscribe-branded yt-uix-button-has-icon no-icon-markup yt-uix-subscription-button yt-can-buffer yt-uix-servicelink" type="submit">
         Give me the comments!
       </button>
+      <div v-if="error" class="form__error">
+        <img src="https://media.giphy.com/media/13NRvWtOiMXawM/giphy.gif">
+        <div v-for="(item, index) in error.errors" v-bind:key="index" v-bind:item="item">
+          <p>Domain: <strong>{{ item.domain }}</strong></p>
+          <p>Message: <strong>{{ item.message }}</strong></p>
+          <p>Reason: <strong>{{ item.reason }}</strong></p>
+        </div>
+      </div>
     </form>
 
     <div v-if="commentsCount" class="branded-page-box yt-card loading-box">
@@ -80,7 +88,8 @@
           end: ''
         },
         comments: [],
-        commentsCount: 0
+        commentsCount: 0,
+        error: false
       }
     },
     components: {
@@ -97,12 +106,39 @@
         window.localStorage.videoId = this.videoId
       },
       onSubmit: function () {
-        this.loading = true
-        this.time.start = Date.now()
         this.comments = []
         this.commentsCount = 0
+        this.error = false
+        this.loading = true
+        this.time.start = Date.now()
         this.saveConfig()
         this.getComments()
+      },
+      parseJSON: function (response) {
+        return new Promise(
+          (resolve) => response.json()
+            .then((json) => resolve({
+              status: response.status,
+              ok: response.ok,
+              json
+            }))
+        )
+      },
+      request: function (url) {
+        return new Promise((resolve, reject) => {
+          fetch(url)
+            .then(this.parseJSON)
+            .then((response) => {
+              if (response.ok) {
+                return resolve(response.json)
+              }
+              // extract the error from the server's json
+              return reject(response.json.error)
+            })
+            .catch((error) => reject({
+              networkError: error.message
+            }))
+        })
       },
       getComments: function (pageToken) {
         const url = new URL('https://www.googleapis.com/youtube/v3/commentThreads')
@@ -119,8 +155,14 @@
 
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
 
-        fetch(url)
-          .then(response => response.json())
+        this.request(url)
+          .catch(error => {
+            this.loading = false
+            this.error = error
+            return {
+              items: []
+            }
+          })
           .then(response => {
             response.items.forEach(comment => {
               this.commentsCount++
@@ -229,6 +271,16 @@
     padding: 20px 40px !important;
     height: auto !important;
     font-size: 14px;
+  }
+
+  .form__error {
+    max-width: 80%;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid red;
+    font-size: 14px;
+    line-height: 2;
   }
 
   .loading-box {
