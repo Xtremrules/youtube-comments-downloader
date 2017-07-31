@@ -56,7 +56,6 @@
 
         <section v-for="(comment, index) in comments"
                  v-bind:key="index"
-                 v-bind:comment="comment"
                  class="comment-thread-renderer"
         >
           <comment :comment="comment"></comment>
@@ -64,7 +63,6 @@
           <div v-if="comment.replies" class="comment-replies-renderer">
             <comment v-for="(reply, index) in comment.replies"
                      v-bind:key="index"
-                     v-bind:reply="reply"
                      :comment="reply"
             ></comment>
           </div>

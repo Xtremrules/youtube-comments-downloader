@@ -3,17 +3,11 @@
 import Vue from 'vue'
 import App from './App'
 import VueTimeago from 'vue-timeago'
+import VueLazyload from 'vue-lazyload'
 
 import './assets/css/yt.css'
 
 Vue.config.productionTip = false
-
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  template: '<App/>',
-  components: { App }
-})
 
 Vue.use(VueTimeago, {
   name: 'timeago', // component name, `timeago` by default
@@ -30,4 +24,13 @@ Vue.use(VueTimeago, {
       ['%s year ago', '%s years ago']
     ]
   }
+})
+
+Vue.use(VueLazyload)
+
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  template: '<App/>',
+  components: { App }
 })
