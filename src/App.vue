@@ -46,7 +46,7 @@
       </h1>
     </div>
 
-    <section v-if="commentsCount && !loading">
+    <section v-if="commentsCount">
       <div class="branded-page-box yt-card loading-box">
         <paginate-links for="comments"
                         :show-step-links="true"
@@ -62,7 +62,7 @@
             </h2>
           </div>
           <paginate name="comments"
-                    :list="comments"
+                    :list="sortedComments"
                     :per="100"
           >
             <section v-for="(comment, index) in paginated('comments')"
@@ -117,6 +117,11 @@
     computed: {
       getDuration: function () {
         return (this.time.end - this.time.start) / 1000
+      },
+      sortedComments: function () {
+        return this.comments.sort((a, b) => {
+          return b.likes - a.likes
+        })
       }
     },
     methods: {
@@ -220,9 +225,6 @@
             } else {
               this.loading = false
               this.time.end = Date.now()
-              this.comments = this.comments.sort((a, b) => {
-                return b.likes - a.likes
-              })
             }
           })
       }
