@@ -5,7 +5,7 @@
       <div class="form__hint">
         This app need a browser API key to get data from YouTube Data API.
       </div>
-      <a href="https://developers.google.com/youtube/registering_an_application" target="_blank">
+      <a href="https://developers.google.com/youtube/registering_an_application" target="_blank" rel="noopener">
           Click to read how to create a API key for browser app
       </a>
       <br>

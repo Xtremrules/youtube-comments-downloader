@@ -1,6 +1,6 @@
 {
-  "name": "youtube-comments-downloader",
-  "short_name": "youtube-comments-downloader",
+  "name": "Youtube Comments Downloader",
+  "short_name": "YT Comments",
   "icons": [
     {
       "src": "/static/img/icons/android-chrome-192x192.png",
