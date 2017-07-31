@@ -99,6 +99,8 @@
       onSubmit: function () {
         this.loading = true
         this.time.start = Date.now()
+        this.comments = []
+        this.commentsCount = 0
         this.saveConfig()
         this.getComments()
       },
@@ -168,6 +170,10 @@
 </script>
 
 <style>
+  body {
+    min-width: 320px;
+  }
+
   #app {
     display: flex;
     justify-content: center;
@@ -178,6 +184,7 @@
     min-height: 100vh;
     margin: auto;
     padding: 30px 0;
+    box-sizing: border-box;
   }
 
   #app > * {
