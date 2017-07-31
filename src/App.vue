@@ -46,29 +46,49 @@
       </h1>
     </div>
 
-    <div v-if="commentsCount && !loading" id="watch-discussion" class="branded-page-box yt-card scrolldetect">
-      <div id="comment-section-renderer" class="comment-section-renderer">
-        <div class="comments-header-renderer">
-          <h2 class="comment-section-header-renderer">
-            <b>Comments</b> • {{ commentsCount }}
-          </h2>
-        </div>
-
-        <section v-for="(comment, index) in comments"
-                 v-bind:key="index"
-                 class="comment-thread-renderer"
-        >
-          <comment :comment="comment"></comment>
-
-          <div v-if="comment.replies" class="comment-replies-renderer">
-            <comment v-for="(reply, index) in comment.replies"
-                     v-bind:key="index"
-                     :comment="reply"
-            ></comment>
-          </div>
-        </section>
+    <section v-if="commentsCount && !loading">
+      <div class="branded-page-box yt-card loading-box">
+        <paginate-links for="comments"
+                        :show-step-links="true"
+                        :limit="5"
+        ></paginate-links>
       </div>
-    </div>
+
+      <div id="watch-discussion" class="branded-page-box yt-card scrolldetect">
+        <div id="comment-section-renderer" class="comment-section-renderer">
+          <div class="comments-header-renderer">
+            <h2 class="comment-section-header-renderer">
+              <b>Comments</b> • {{ commentsCount }}
+            </h2>
+          </div>
+          <paginate name="comments"
+                    :list="comments"
+                    :per="100"
+          >
+            <section v-for="(comment, index) in paginated('comments')"
+                    v-bind:key="index"
+                    class="comment-thread-renderer"
+            >
+              <comment :comment="comment"></comment>
+
+              <div v-if="comment.replies" class="comment-replies-renderer">
+                <comment v-for="(reply, index) in comment.replies"
+                        v-bind:key="index"
+                        :comment="reply"
+                ></comment>
+              </div>
+            </section>
+          </paginate>
+        </div>
+      </div>
+
+      <div class="branded-page-box yt-card loading-box">
+        <paginate-links for="comments"
+                        :show-step-links="true"
+                        :limit="5"
+        ></paginate-links>
+      </div>
+    </section>
   </main>
 </template>
 
@@ -87,7 +107,8 @@
         },
         comments: [],
         commentsCount: 0,
-        error: false
+        error: false,
+        paginate: ['comments']
       }
     },
     components: {
@@ -287,4 +308,39 @@
     align-items: center;
     padding: 20px;
   }
+
+  .paginate-links {
+    display: flex;
+  }
+
+  .paginate-links li {
+    margin: 5px;
+  }
+
+  .paginate-links a {
+    display: block;
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    border: 1px solid #ddd;
+    color: #000;
+  }
+
+  .paginate-links a:hover {
+    text-decoration: none;
+    background: #f8f8f8;
+  }
+
+  .paginate-links .active a {
+    background: #167ac6;
+    color: #fff;
+    border-color: #167ac6;
+  }
+
+  .paginate-links .active a:hover {
+    background: #1270b7;
+    border-color: #1270b7;
+  }
+
 </style>

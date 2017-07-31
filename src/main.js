@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import VueTimeago from 'vue-timeago'
 import VueLazyload from 'vue-lazyload'
+import VuePaginate from 'vue-paginate'
 
 import './assets/css/yt.css'
 
@@ -27,6 +28,8 @@ Vue.use(VueTimeago, {
 })
 
 Vue.use(VueLazyload)
+
+Vue.use(VuePaginate)
 
 /* eslint-disable no-new */
 new Vue({
