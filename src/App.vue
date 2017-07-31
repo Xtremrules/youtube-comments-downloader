@@ -46,106 +46,19 @@
           </h2>
         </div>
 
-        <section v-for="(comment, index) in comments" v-bind:key="index" v-bind:comment="comment" class="comment-thread-renderer">
-          <div class="comment-renderer">
-            <a v-bind:href="comment.channel" class="g-hovercard yt-uix-sessionlink spf-link">
-              <span class="video-thumb comment-author-thumbnail yt-thumb yt-thumb-48">
-                <span class="yt-thumb-square">
-                  <span class="yt-thumb-clip">
-                    <img v-bind:src="comment.avatar" width="48" height="48">
-                    <span class="vertical-align"></span>
-                  </span>
-                </span>
-              </span>
-            </a>
-            <div class="comment-renderer-content">
-              <div class="comment-renderer-header">
-                <a v-bind:href="comment.channel" class="comment-author-text g-hovercard yt-uix-sessionlink spf-link">
-                  {{ comment.name }}
-                </a>
-                <span class="comment-renderer-time">
-                  <a href="#" class="yt-uix-sessionlink spf-link">
-                    <timeago :since="comment.date"></timeago>
-                  </a>
-                </span>
-              </div>
-              <div class="comment-renderer-text">
-                <div v-html="comment.text" class="comment-renderer-text-content"></div>
-              </div>
-              <div class="comment-renderer-footer">
-                <div class="comment-action-buttons-toolbar">
-                  <button class="yt-uix-button yt-uix-button-size-small yt-uix-button-link comment-renderer-reply comment-simplebox-trigger"
-                          type="button">
-                    <span class="yt-uix-button-content">
-                      Reply
-                    </span>
-                  </button>
-                  <span v-if="comment.likes > 0" class="comment-renderer-like-count off">
-                    {{ comment.likes }}
-                  </span>
-                  <span role="radiogroup">
-                    <button class="yt-uix-button yt-uix-button-size-default yt-uix-button-default yt-uix-button-empty yt-uix-button-has-icon no-icon-markup comment-action-buttons-renderer-thumb yt-uix-sessionlink sprite-comment-actions sprite-like i-a-v-sprite-like"
-                            type="button"
-                    ></button>
-                    <button class="yt-uix-button yt-uix-button-size-default yt-uix-button-default yt-uix-button-empty yt-uix-button-has-icon no-icon-markup comment-action-buttons-renderer-thumb yt-uix-sessionlink sprite-comment-actions sprite-dislike i-a-v-sprite-dislike"
-                            type="button"
-                    ></button>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <section v-for="(comment, index) in comments"
+                 v-bind:key="index"
+                 v-bind:comment="comment"
+                 class="comment-thread-renderer"
+        >
+          <comment :comment="comment"></comment>
 
           <div v-if="comment.replies" class="comment-replies-renderer">
-            <div v-for="(reply, index) in comment.replies" v-bind:key="index" v-bind:reply="reply" class="comment-renderer">
-              <a v-bind:href="reply.channel" class="g-hovercard yt-uix-sessionlink spf-link">
-                <span class="video-thumb comment-author-thumbnail yt-thumb yt-thumb-48">
-                  <span class="yt-thumb-square">
-                    <span class="yt-thumb-clip">
-                      <img v-bind:src="reply.avatar" width="48" height="48">
-                      <span class="vertical-align"></span>
-                    </span>
-                  </span>
-                </span>
-              </a>
-              <div class="comment-renderer-content">
-                <div class="comment-renderer-header">
-                  <a v-bind:href="reply.channel" class="comment-author-text g-hovercard yt-uix-sessionlink spf-link">
-                    {{ reply.name }}
-                  </a>
-                  <span class="comment-renderer-time">
-                    <a href="#" class="yt-uix-sessionlink spf-link">
-                      <timeago :since="reply.date"></timeago>
-                    </a>
-                  </span>
-                </div>
-                <div class="comment-renderer-text">
-                  <div v-html="reply.text" class="comment-renderer-text-content"></div>
-                </div>
-                <div class="comment-renderer-footer">
-                  <div class="comment-action-buttons-toolbar">
-                    <button class="yt-uix-button yt-uix-button-size-small yt-uix-button-link comment-renderer-reply comment-simplebox-trigger"
-                            type="button"
-                    >
-                      <span class="yt-uix-button-content">
-                        Reply
-                      </span>
-                    </button>
-                    <span v-if="reply.likes > 0" class="comment-renderer-like-count off">
-                      {{ reply.likes }}
-                    </span>
-                    <span role="radiogroup">
-                      <button class="yt-uix-button yt-uix-button-size-default yt-uix-button-default yt-uix-button-empty yt-uix-button-has-icon no-icon-markup comment-action-buttons-renderer-thumb yt-uix-sessionlink sprite-comment-actions sprite-like i-a-v-sprite-like"
-                              type="button"
-                      ></button>
-                      <button class="yt-uix-button yt-uix-button-size-default yt-uix-button-default yt-uix-button-empty yt-uix-button-has-icon no-icon-markup comment-action-buttons-renderer-thumb yt-uix-sessionlink sprite-comment-actions sprite-dislike i-a-v-sprite-dislike"
-                              type="button"
-                      ></button>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <comment v-for="(reply, index) in comment.replies"
+                     v-bind:key="index"
+                     v-bind:reply="reply"
+                     :comment="reply"
+            ></comment>
           </div>
         </section>
       </div>
@@ -154,6 +67,8 @@
 </template>
 
 <script>
+  import Comment from '@/components/Comment'
+
   export default {
     data () {
       return {
@@ -167,6 +82,9 @@
         comments: [],
         commentsCount: 0
       }
+    },
+    components: {
+      Comment
     },
     computed: {
       getDuration: function () {
