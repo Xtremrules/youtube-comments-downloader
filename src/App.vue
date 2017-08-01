@@ -1,21 +1,9 @@
 <template>
   <main id="app">
     <form v-on:submit.prevent="onSubmit" class="form branded-page-box yt-card">
-      <h1 class="form__heading">Youtube comments downloader</h1>
-      <div class="form__hint">
-        This app need a browser API key to get data from YouTube Data API.
-      </div>
-      <a href="https://developers.google.com/youtube/registering_an_application" target="_blank" rel="noopener">
-          Click to read how to create a API key for browser app
-      </a>
-      <br>
-      <div class="form__field">
-        <label class="form__label" for="api-key">
-          API Key
-        </label>
-        <input class="form__input" type="text" id="api-key" v-model="apiKey" required>
-      </div>
-
+      <h1 class="form__heading">
+        Youtube comments downloader
+      </h1>
       <div class="form__field">
         <label class="form__label" for="video-id">
           Youtube video ID
@@ -26,6 +14,7 @@
       <button :disabled="loading" class="form__button yt-uix-button yt-uix-button-size-default yt-uix-button-subscribe-branded yt-uix-button-has-icon no-icon-markup yt-uix-subscription-button yt-can-buffer yt-uix-servicelink" type="submit">
         Give me the comments!
       </button>
+
       <div v-if="error" class="form__error">
         <img src="https://media.giphy.com/media/13NRvWtOiMXawM/giphy.gif">
         <div v-for="(item, index) in error.errors" v-bind:key="index" v-bind:item="item">
@@ -98,7 +87,6 @@
   export default {
     data () {
       return {
-        apiKey: window.localStorage.apiKey,
         videoId: window.localStorage.videoId,
         loading: false,
         time: {
@@ -126,7 +114,6 @@
     },
     methods: {
       saveConfig: function () {
-        window.localStorage.apiKey = this.apiKey
         window.localStorage.videoId = this.videoId
       },
       onSubmit: function () {
@@ -167,7 +154,7 @@
       getComments: function (pageToken) {
         const url = new URL('https://www.googleapis.com/youtube/v3/commentThreads')
         const params = {
-          key: this.apiKey,
+          key: 'AIzaSyAyYPux1VOpcbKk2V_FKt3nPxfz6lu437k',
           videoId: this.videoId,
           part: 'snippet,replies',
           maxResults: 100
@@ -266,10 +253,6 @@
     margin-bottom: 30px;
   }
 
-  .form__hint {
-    margin-bottom: 5px;
-  }
-
   .form__field {
     display: flex;
     justify-content: center;
@@ -344,5 +327,4 @@
     background: #1270b7;
     border-color: #1270b7;
   }
-
 </style>
