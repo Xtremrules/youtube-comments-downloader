@@ -38,7 +38,7 @@
       Loading... {{ commentsCount }} comments fetched
     </div>
 
-    <section v-if="commentsCount && !loading">
+    <section v-show="commentsCount && !loading">
       <div id="watch-discussion" class="branded-page-box yt-card scrolldetect">
         <div id="comment-section-renderer" class="comment-section-renderer">
           <div class="comments-header-renderer">
@@ -67,15 +67,6 @@
 
 <script>
   import Comment from '@/components/Comment'
-  import Layzr from 'layzr.js'
-
-  const instance = Layzr()
-
-  setInterval(() => {
-    instance
-      .update()
-      .check()
-  }, 200)
 
   export default {
     data () {

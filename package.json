@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
-    "layzr.js": "^2.2.2",
+    "lazysizes": "^4.0.0-rc3",
     "vue": "^2.3.3",
     "vue-timeago": "^3.3.5"
   },

@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import VueTimeago from 'vue-timeago'
+import 'lazysizes'
 
 import './assets/css/yt.css'
 

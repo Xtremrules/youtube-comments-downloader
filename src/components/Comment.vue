@@ -4,7 +4,7 @@
       <span class="video-thumb comment-author-thumbnail yt-thumb yt-thumb-48">
         <span class="yt-thumb-square">
           <span class="yt-thumb-clip">
-            <img :data-normal="comment.avatar" width="48" height="48">
+            <img :data-src="comment.avatar" class="lazyload" width="48" height="48">
             <span class="vertical-align"></span>
           </span>
         </span>
