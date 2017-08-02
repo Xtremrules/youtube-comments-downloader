@@ -8,10 +8,18 @@
         <label class="form__label" for="video-id">
           Youtube video ID
         </label>
-        <input class="form__input" type="text" id="video-id" v-model="videoId" required>
+        <input class="form__input"
+               type="text"
+               id="video-id"
+               v-model="videoId"
+               required
+        >
       </div>
 
-      <button :disabled="loading" class="form__button yt-uix-button yt-uix-button-size-default yt-uix-button-subscribe-branded yt-uix-button-has-icon no-icon-markup yt-uix-subscription-button yt-can-buffer yt-uix-servicelink" type="submit">
+      <button :disabled="loading"
+              type="submit"
+              class="form__button yt-uix-button yt-uix-button-size-default yt-uix-button-subscribe-branded yt-uix-button-has-icon no-icon-markup yt-uix-subscription-button yt-can-buffer yt-uix-servicelink"
+      >
         Give me the comments!
       </button>
 
@@ -25,24 +33,12 @@
       </div>
     </form>
 
-    <div v-if="commentsCount" class="branded-page-box yt-card loading-box">
-      <span v-show="loading" class="yt-spinner-img yt-sprite"></span>
-      <h1 v-if="loading">
-        Loading... {{ commentsCount }} comments fetched.
-      </h1>
-      <h1 v-else>
-        {{ commentsCount }} comments loaded in {{ getDuration }} seconds
-      </h1>
+    <div v-if="loading" class="branded-page-box yt-card loading-box">
+      <span class="yt-spinner-img yt-sprite"></span>
+      Loading... {{ commentsCount }} comments fetched
     </div>
 
-    <section v-if="commentsCount">
-      <div class="branded-page-box yt-card loading-box">
-        <paginate-links for="comments"
-                        :show-step-links="true"
-                        :limit="5"
-        ></paginate-links>
-      </div>
-
+    <section v-if="commentsCount && !loading">
       <div id="watch-discussion" class="branded-page-box yt-card scrolldetect">
         <div id="comment-section-renderer" class="comment-section-renderer">
           <div class="comments-header-renderer">
@@ -50,32 +46,20 @@
               <b>Comments</b> • {{ commentsCount }}
             </h2>
           </div>
-          <paginate name="comments"
-                    :list="sortedComments"
-                    :per="100"
+          <section v-for="comment in sortedComments"
+                   v-bind:key="comment.id"
+                   class="comment-thread-renderer"
           >
-            <section v-for="(comment, index) in paginated('comments')"
-                    v-bind:key="index"
-                    class="comment-thread-renderer"
-            >
-              <comment :comment="comment"></comment>
+            <comment :comment="comment"></comment>
 
-              <div v-if="comment.replies" class="comment-replies-renderer">
-                <comment v-for="(reply, index) in comment.replies"
-                        v-bind:key="index"
-                        :comment="reply"
-                ></comment>
-              </div>
-            </section>
-          </paginate>
+            <div v-if="comment.replies" class="comment-replies-renderer">
+              <comment v-for="reply in comment.replies"
+                       v-bind:key="reply.id"
+                       :comment="reply"
+              ></comment>
+            </div>
+          </section>
         </div>
-      </div>
-
-      <div class="branded-page-box yt-card loading-box">
-        <paginate-links for="comments"
-                        :show-step-links="true"
-                        :limit="5"
-        ></paginate-links>
       </div>
     </section>
   </main>
@@ -83,29 +67,30 @@
 
 <script>
   import Comment from '@/components/Comment'
+  import Layzr from 'layzr.js'
+
+  const instance = Layzr()
+
+  setInterval(() => {
+    instance
+      .update()
+      .check()
+  }, 200)
 
   export default {
     data () {
       return {
         videoId: window.localStorage.videoId,
         loading: false,
-        time: {
-          start: '',
-          end: ''
-        },
         comments: [],
         commentsCount: 0,
-        error: false,
-        paginate: ['comments']
+        error: false
       }
     },
     components: {
       Comment
     },
     computed: {
-      getDuration: function () {
-        return (this.time.end - this.time.start) / 1000
-      },
       sortedComments: function () {
         return this.comments.sort((a, b) => {
           return b.likes - a.likes
@@ -117,11 +102,10 @@
         window.localStorage.videoId = this.videoId
       },
       onSubmit: function () {
+        this.loading = true
         this.comments = []
         this.commentsCount = 0
         this.error = false
-        this.loading = true
-        this.time.start = Date.now()
         this.saveConfig()
         this.getComments()
       },
@@ -175,10 +159,15 @@
             }
           })
           .then(response => {
+            if (response.nextPageToken) {
+              this.getComments(response.nextPageToken)
+            }
+
             response.items.forEach(comment => {
               this.commentsCount++
 
               const object = {
+                id: comment.snippet.topLevelComment.id,
                 name: comment.snippet.topLevelComment.snippet.authorDisplayName,
                 avatar: comment.snippet.topLevelComment.snippet.authorProfileImageUrl,
                 channel: comment.snippet.topLevelComment.snippet.authorChannelUrl,
@@ -194,6 +183,7 @@
                   this.commentsCount++
 
                   object.replies.push({
+                    id: reply.id,
                     name: reply.snippet.authorDisplayName,
                     avatar: reply.snippet.authorProfileImageUrl,
                     channel: reply.snippet.authorChannelUrl,
@@ -207,11 +197,8 @@
               this.comments.push(object)
             })
 
-            if (response.nextPageToken) {
-              this.getComments(response.nextPageToken)
-            } else {
+            if (!response.nextPageToken) {
               this.loading = false
-              this.time.end = Date.now()
             }
           })
       }
@@ -271,10 +258,10 @@
   }
 
   .form__button {
-    margin-top: 20px;
+    margin-top: 10px;
     padding: 20px 40px !important;
     height: auto !important;
-    font-size: 14px;
+    font-size: 14px !important;
   }
 
   .form__error {
@@ -292,39 +279,5 @@
     justify-content: center;
     align-items: center;
     padding: 20px;
-  }
-
-  .paginate-links {
-    display: flex;
-  }
-
-  .paginate-links li {
-    margin: 5px;
-  }
-
-  .paginate-links a {
-    display: block;
-    width: 48px;
-    height: 48px;
-    line-height: 48px;
-    text-align: center;
-    border: 1px solid #ddd;
-    color: #000;
-  }
-
-  .paginate-links a:hover {
-    text-decoration: none;
-    background: #f8f8f8;
-  }
-
-  .paginate-links .active a {
-    background: #167ac6;
-    color: #fff;
-    border-color: #167ac6;
-  }
-
-  .paginate-links .active a:hover {
-    background: #1270b7;
-    border-color: #1270b7;
   }
 </style>
