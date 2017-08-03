@@ -271,4 +271,14 @@
     align-items: center;
     padding: 20px;
   }
+
+  /* YT styles override */
+
+  #watch-discussion {
+    display: block !important;
+  }
+
+  .comment-renderer-text-content {
+    max-height: none !important;
+  }
 </style>
