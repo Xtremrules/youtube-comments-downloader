@@ -1,37 +1,57 @@
 <template>
-  <form v-on:submit.prevent="onSubmit" class="form branded-page-box yt-card">
-    <h1 class="form__heading">
-      Youtube comments downloader
-    </h1>
-    <div class="form__field">
-      <label class="form__label" for="video-id">
-        Youtube video ID
-      </label>
-      <input class="form__input"
+  <v-form v-on:submit.prevent="onSubmit">
+    <v-layout row wrap>
+      <v-flex d-flex :class="{ 'md6': video }">
+        <v-card flat>
+          <v-card-text>
+            <v-text-field
+              label="Youtube video ID"
               type="text"
               id="video-id"
-              :value="videoId"
+              v-model="id"
               @input="updateVideoId"
-              required
-      >
-    </div>
+              color="red"
+            ></v-text-field>
+            <p class="grey--text">
+              Copy and paste YouTube video ID from URL to fetch all comments.
+            </p>
+          </v-card-text>
+        </v-card>
+      </v-flex>
 
-    <button :disabled="loading"
-            type="submit"
-            class="
-                form__button
-                yt-uix-button
-                yt-uix-button-size-default
-                yt-uix-button-subscribe-branded
-                yt-uix-button-has-icon
-                no-icon-markup
-                yt-uix-subscription-button
-                yt-can-buffer
-                yt-uix-servicelink
-            "
-    >
-      Give me the comments!
-    </button>
+      <v-flex v-if="video" md6 d-flex>
+        <v-card flat>
+          <v-card-media
+            :src="video.snippet.thumbnails.standard.url"
+            height="150px"
+          ></v-card-media>
+          <v-card-title class="px-0 py-2">
+            <h3 class="title mb-0">
+              {{ video.snippet.title }}
+            </h3>
+          </v-card-title>
+          <v-card-text class="pa-0">
+            <div>
+              {{ video.snippet.channelTitle }}
+            </div>
+            <div>
+              {{ video.statistics.commentCount }} comments
+            </div>
+          </v-card-text>
+          <v-card-actions class="px-0">
+            <v-btn
+              type="submit"
+              color="red white--text mx-0"
+              block
+              :loading="loading"
+              :disabled="loading"
+            >
+              Fetch comments
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+    </v-layout>
 
     <div v-if="error" class="form__error">
       <img src="https://media.giphy.com/media/13NRvWtOiMXawM/giphy.gif">
@@ -41,73 +61,34 @@
         <p>Reason: <strong>{{ item.reason }}</strong></p>
       </div>
     </div>
-  </form>
+  </v-form>
 </template>
 
 <script>
   import { mapState } from 'vuex'
 
   export default {
+    data () {
+      return {
+        id: this.videoId
+      }
+    },
     computed: mapState([
+      'error',
       'loading',
-      'videoId',
-      'error'
+      'video',
+      'videoId'
     ]),
     methods: {
       updateVideoId (event) {
-        this.$store.commit('videoId', event.target.value)
+        this.$store.dispatch('reset')
+        this.$store.commit('videoId', this.id)
+        this.$store.dispatch('getVideo')
       },
       onSubmit () {
-        this.$store.dispatch('getComments')
+        this.$store.dispatch('reset')
+        this.$store.dispatch('getCommentThreads')
       }
     }
   }
 </script>
-
-<style>
-  .form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 30px;
-  }
-
-  .form__heading {
-    margin-bottom: 30px;
-  }
-
-  .form__field {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 80%;
-    margin: 10px 0;
-  }
-
-  .form__label {
-    flex: 0 0 25%;
-  }
-
-  .form__input {
-    flex: 1;
-    padding: 10px;
-  }
-
-  .form__button {
-    margin-top: 10px;
-    padding: 20px 40px !important;
-    height: auto !important;
-    font-size: 14px !important;
-  }
-
-  .form__error {
-    max-width: 80%;
-    margin-top: 30px;
-    padding: 10px 20px;
-    background: rgba(255, 0, 0, 0.1);
-    border: 1px solid red;
-    font-size: 14px;
-    line-height: 2;
-  }
-</style>

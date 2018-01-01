@@ -3,10 +3,11 @@
 import Vue from 'vue'
 import store from './store'
 import App from './App'
-import 'lazysizes'
 import VueTimeago from 'vue-timeago'
+import Vuetify from 'vuetify'
+import 'lazysizes'
 
-import './assets/css/yt-styles.css'
+import('vuetify/dist/vuetify.min.css')
 
 Vue.config.productionTip = false
 
@@ -26,6 +27,8 @@ Vue.use(VueTimeago, {
     ]
   }
 })
+
+Vue.use(Vuetify)
 
 /* eslint-disable no-new */
 new Vue({

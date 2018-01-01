@@ -1,21 +1,31 @@
 <template>
-  <main id="app">
-    <ytForm></ytForm>
-    <YtLoader></YtLoader>
-    <YtComments></YtComments>
-  </main>
+  <v-app class="white">
+    <v-content>
+      <v-toolbar dark color="red">
+        <v-toolbar-title class="white--text">
+          Youtube comments downloader
+        </v-toolbar-title>
+      </v-toolbar>
+      <v-container grid-list-xl>
+        <v-layout>
+          <v-flex xs12 md8 offset-md2>
+            <Form></Form>
+            <Comments></Comments>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
-  import YtForm from '@/components/YtForm'
-  import YtLoader from '@/components/YtLoader'
-  import YtComments from '@/components/YtComments'
+  import Form from '@/components/YtForm'
+  import Comments from '@/components/YtComments'
 
   export default {
     components: {
-      YtForm,
-      YtLoader,
-      YtComments
+      Form,
+      Comments
     },
     computed: {
       sortedComments: function () {
@@ -28,34 +38,8 @@
 </script>
 
 <style>
-  body {
-    min-width: 320px;
-  }
-
-  #app {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 90%;
-    max-width: 800px;
-    min-height: 100vh;
-    margin: auto;
-    padding: 30px 0;
-    box-sizing: border-box;
-  }
-
-  #app > * {
-    width: 100%;
-  }
-
-  /* YT styles override */
-
-  #watch-discussion {
-    display: block !important;
-  }
-
-  .comment-renderer-text-content {
-    max-height: none !important;
+  html {
+    text-rendering: auto !important;
+    -webkit-font-smoothing: auto !important;
   }
 </style>

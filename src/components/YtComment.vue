@@ -1,0 +1,166 @@
+<template>
+  <li class="comment">
+    <v-avatar class="comment__avatar grey" :size="avatarSize">
+      <img
+        class="lazyload"
+        :data-src="avatar"
+        :width="avatarSize"
+        :height="avatarSize"
+      >
+    </v-avatar>
+
+    <div class="comment__content">
+      <div class="comment__header">
+        <span class="comment__author">
+          {{ comment.name }}
+        </span>
+        <span class="comment__time">
+          <timeago :since="comment.date"></timeago>
+        </span>
+      </div>
+
+      <div class="comment__text" v-html="comment.text"></div>
+
+      <div class="comment__footer">
+        <span class="comment__reply">
+          Reply
+        </span>
+
+        <span class="comment__count" v-if="comment.likes > 0">
+          {{ comment.likes }}
+        </span>
+
+        <v-btn flat icon class="comment__button">
+          <v-icon size="16px">thumb_up</v-icon>
+        </v-btn>
+
+        <v-btn flat icon class="comment__button">
+          <v-icon size="16px">thumb_down</v-icon>
+        </v-btn>
+      </div>
+
+      <div class="comment__child" v-if="comment.totalReplyCount > 0">
+        <comment
+          v-for="reply in replies"
+          v-bind:key="reply.id"
+          :comment="reply"
+          isChild="true"
+        ></comment>
+      </div>
+    </div>
+  </li>
+</template>
+
+<script>
+  export default {
+    name: 'comment',
+    props: ['comment', 'isChild'],
+    computed: {
+      avatar () {
+        return this.comment.avatar.replace(
+          /\/s28(.*\/photo\.jpg)$/,
+          `/s${this.avatarSize * 2}$1`
+        )
+      },
+      avatarSize () {
+        return this.isChild ? 24 : 40
+      },
+      replies () {
+        return this.comment.replies.sort((a, b) => {
+          return new Date(a.date) - new Date(b.date)
+        })
+      }
+    }
+  }
+</script>
+
+<style>
+  .comment {
+    display: flex;
+    margin-bottom: 16px;
+  }
+
+  .comment__avatar {
+    margin-right: 16px;
+  }
+
+  .comment__avatar img {
+    transition: opacity 300ms ease-in-out;
+  }
+
+  .comment__avatar .lazyload,
+  .comment__avatar .lazyloading {
+    opacity: 0;
+  }
+
+  .comment__header {
+    display: flex;
+    align-items: center;
+    height: 20px;
+    margin-bottom: 2px;
+    font-size: 13px;
+  }
+
+  .comment__author {
+    margin-right: 8px;
+    color: rgb(17, 17, 17);
+    font-weight: 500;
+  }
+
+  .comment__time {
+    color: rgb(136, 136, 136);
+    font-weight: 400;
+  }
+
+  .comment__text {
+    color: rgb(17, 17, 17);
+    font-size: 14px;
+    line-height: 20px;
+    word-break: break-word;
+  }
+
+  .comment__text a {
+    color: rgb(38, 147, 230);
+    font-weight: 400;
+    text-decoration: none;
+  }
+
+  .comment__footer {
+    display: flex;
+    height: 32px;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .comment__reply {
+    margin-left: -16px;
+    padding: 8px 16px;
+    color: rgba(17, 17, 17, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .comment__count {
+    margin-left: 4px;
+    margin-right: 16px;
+    color: rgba(17, 17, 17, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .comment__button {
+    margin: 0;
+    height: 32px;
+    width: 32px;
+    color: rgba(17, 17, 17, 0.4) !important;
+  }
+
+  .comment__child {
+    margin-top: 16px;
+  }
+
+  .comment__child .comment:last-child {
+    margin-bottom: 0;
+  }
+</style>
