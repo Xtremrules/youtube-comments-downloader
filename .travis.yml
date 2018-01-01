@@ -10,8 +10,7 @@ script:
 deploy:
   provider: firebase
   project: "comments-downloader"
-  token:
-    secure: "$FIREBASE_TOKEN"
+  token: "$FIREBASE_TOKEN"
   skip_cleanup: true
   on:
     branch: master
