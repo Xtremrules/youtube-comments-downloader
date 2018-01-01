@@ -30,11 +30,11 @@
           {{ comment.likes }}
         </span>
 
-        <v-btn flat icon class="comment__button">
+        <v-btn flat icon class="comment__button ma-0">
           <v-icon size="16px">thumb_up</v-icon>
         </v-btn>
 
-        <v-btn flat icon class="comment__button">
+        <v-btn flat icon class="comment__button ma-0">
           <v-icon size="16px">thumb_down</v-icon>
         </v-btn>
       </div>
@@ -74,7 +74,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .comment {
     display: flex;
     margin-bottom: 16px;

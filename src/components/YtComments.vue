@@ -80,7 +80,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .comments {
     list-style: none;
     padding: 0;
