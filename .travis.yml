@@ -3,15 +3,13 @@ node_js: 6
 cache:
   yarn: true
   directories:
-    - node_modules
-
+  - node_modules
 script:
-  - yarn build
-
+- yarn build
 deploy:
-  provider: pages
-  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+  provider: firebase
+  project: comments-downloader
+  token: "$FIREBASE_TOKEN"
   skip_cleanup: true
-  local_dir: dist
   on:
     branch: master
