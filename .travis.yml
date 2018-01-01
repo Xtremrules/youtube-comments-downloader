@@ -8,7 +8,7 @@ script:
 - yarn build
 deploy:
   provider: firebase
-  project: comments-downloader
+  project: "comments-downloader"
   token: "$FIREBASE_TOKEN"
   skip_cleanup: true
   on:
