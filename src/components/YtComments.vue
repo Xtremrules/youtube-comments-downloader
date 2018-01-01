@@ -37,45 +37,12 @@
         }
         return 0
       },
-      comments () {
-        return this.$store.getters.comments
-      },
       ...mapState([
-        'video',
+        'comments',
         'commentsCount',
         'loading',
-        'visibleCounter'
+        'video'
       ])
-    },
-    methods: {
-      debounce (func, wait, immediate) {
-        let timeout
-        return function () {
-          const context = this
-          const args = arguments
-          const later = function () {
-            timeout = null
-            if (!immediate) func.apply(context, args)
-          }
-          const callNow = immediate && !timeout
-          clearTimeout(timeout)
-          timeout = setTimeout(later, wait)
-          if (callNow) func.apply(context, args)
-        }
-      },
-      infiniteScroll (event) {
-        if (this.commentsCount > this.visibleCounter) {
-          if ((document.body.offsetHeight - 3 * window.innerHeight) < window.pageYOffset) {
-            this.debounce(this.$store.commit('incrementVisibleCounter'), 200)
-          }
-        }
-      }
-    },
-    created () {
-      window.addEventListener('scroll', this.infiniteScroll)
-    },
-    destroyed () {
-      window.removeEventListener('scroll', this.infiniteScroll)
     }
   }
 </script>

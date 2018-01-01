@@ -16,14 +16,8 @@ export default new Vuex.Store({
     videoId: '',
     video: false,
     comments: [],
-    commentsCount: 0,
-    visibleCounter: 10
+    commentsCount: 0
   },
   mutations,
-  actions,
-  getters: {
-    comments: state => {
-      return state.comments.slice(0, state.visibleCounter)
-    }
-  }
+  actions
 })

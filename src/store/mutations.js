@@ -5,9 +5,6 @@ export default {
   video (state, video) {
     state.video = video
   },
-  incrementVisibleCounter (state) {
-    state.visibleCounter += 10
-  },
   comment (state, comment) {
     state.commentsCount++
 

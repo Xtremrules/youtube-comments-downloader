@@ -4,7 +4,6 @@ export default {
   reset (context) {
     context.state.comments = []
     context.state.commentsCount = 0
-    context.state.visibleCounter = 10
   },
   getVideo (context) {
     const url = new URL(context.state.api.url + 'videos')
