@@ -5,15 +5,15 @@
         <v-card flat>
           <v-card-text>
             <v-text-field
-              label="Youtube video ID"
+              label="Youtube video URL or ID"
               type="text"
               id="video-id"
-              v-model="id"
+              v-model="input"
               @input="updateVideoId"
               color="red"
             ></v-text-field>
             <p class="grey--text">
-              Copy and paste YouTube video ID from URL to fetch all comments.
+              Copy and paste YouTube URL or video ID to fetch all comments.
             </p>
           </v-card-text>
         </v-card>
@@ -38,6 +38,7 @@
               {{ video.statistics.commentCount }} comments
             </div>
           </v-card-text>
+
           <v-card-actions class="px-0">
             <v-btn
               type="submit"
@@ -68,26 +69,52 @@
   import { mapState } from 'vuex'
 
   export default {
-    data () {
+    data  () {
       return {
-        id: this.videoId
+        input: '',
+        urlString: window.location.href
       }
     },
     computed: mapState([
       'error',
       'loading',
-      'video',
-      'videoId'
+      'video'
     ]),
     methods: {
       updateVideoId (event) {
         this.$store.dispatch('reset')
-        this.$store.commit('videoId', this.id)
+
+        const checkPattern = /(?:youtube(?:-nocookie)?\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)?([a-zA-Z0-9_-]{11})/
+        const match = this.input.match(checkPattern)
+
+        this.$store.commit(
+          'videoId',
+          match && match[1] ? match[1] : ''
+        )
+
+        if (match && match[1]) {
+          window.history.pushState(
+            {},
+            '',
+            `${window.location.origin}?v=${match[1]}`
+          )
+        } else {
+          window.history.pushState({}, '', window.location.origin)
+        }
+
         this.$store.dispatch('getVideo')
       },
       onSubmit () {
         this.$store.dispatch('reset')
         this.$store.dispatch('getCommentThreads')
+      }
+    },
+    mounted () {
+      const url = new URL(this.urlString)
+
+      if (url.searchParams.get('v')) {
+        this.input = url.searchParams.get('v')
+        this.updateVideoId()
       }
     }
   }
