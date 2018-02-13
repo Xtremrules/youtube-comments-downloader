@@ -9,7 +9,7 @@
       <v-container grid-list-xl>
         <v-layout>
           <v-flex xs12 md8 offset-md2>
-            <Form></Form>
+            <YtForm></YtForm>
             <Comments></Comments>
           </v-flex>
         </v-layout>
@@ -19,12 +19,12 @@
 </template>
 
 <script>
-  import Form from '@/components/YtForm'
+  import YtForm from '@/components/YtForm'
   import Comments from '@/components/YtComments'
 
   export default {
     components: {
-      Form,
+      YtForm,
       Comments
     },
     computed: {
