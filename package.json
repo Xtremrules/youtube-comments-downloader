@@ -1,6 +1,6 @@
 {
   "name": "youtube-comments-downloader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Vue.js project",
   "author": "Bartek Igielski <igloczek@gmail.com>",
   "private": true,
@@ -62,7 +62,8 @@
     "webpack-merge": "^4.1.0"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": ">= 8.0.0",
+    "npm": ">= 5.0.0"
   },
   "browserslist": [
     "> 1%",
