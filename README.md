@@ -1,21 +1,16 @@
-# youtube-comments-downloader
+# Youtube comments downloader
 
-> A Vue.js project
+## Introduction
+Tool created to help Youtube creators deal with thousans of comments under on theirs videos.
 
-## Build Setup
+## How can I use it?
+https://youtubecommentsdownloader.com/
 
-``` bash
-# install dependencies
-npm install
+## It's cool, but I want more features!
+Great, let me know on [Facebook](https://www.facebook.com/iglodottech/)
 
-# serve with hot reload at localhost:8080
-npm run dev
+## Ops, I found a bug
+Create an [Issue](https://github.com/Igloczek/youtube-comments-downloader/issues) or is you are not develper just let me know on [Facebook](https://www.facebook.com/iglodottech/).
 
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## Credits
+[Krzysztof Gonciarz](https://www.facebook.com/krzysztof.gonciarz), one of the greatest Polish Youtube creators, inspired me to start this project, was the first user and supporter.
