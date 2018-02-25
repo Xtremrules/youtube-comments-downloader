@@ -11,6 +11,7 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "babel-plugin-transform-imports": "^1.4.1",
     "lazysizes": "^4.0.1",
     "vue": "^2.5.13",
     "vue-timeago": "^3.4.4",
@@ -52,6 +53,8 @@
     "rimraf": "^2.6.2",
     "semver": "^5.5.0",
     "shelljs": "^0.8.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
     "sw-precache-webpack-plugin": "^0.11.4",
     "url-loader": "^0.6.2",
     "vue-loader": "^14.1.1",

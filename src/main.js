@@ -4,10 +4,43 @@ import Vue from 'vue'
 import store from './store'
 import App from './App'
 import VueTimeago from 'vue-timeago'
-import Vuetify from 'vuetify'
 import 'lazysizes'
 
-import('vuetify/dist/vuetify.min.css')
+import {
+  Vuetify,
+  VApp,
+  VAvatar,
+  VBtn,
+  VCard,
+  VDivider,
+  VForm,
+  VGrid,
+  VIcon,
+  VProgressCircular,
+  VProgressLinear,
+  VTextField,
+  VToolbar
+} from 'vuetify'
+
+Vue.use(Vuetify, {
+  components: {
+    Vuetify,
+    VApp,
+    VAvatar,
+    VBtn,
+    VCard,
+    VDivider,
+    VForm,
+    VGrid,
+    VIcon,
+    VProgressCircular,
+    VProgressLinear,
+    VTextField,
+    VToolbar
+  }
+})
+
+require('vuetify/src/stylus/app.styl')
 
 Vue.config.productionTip = false
 
@@ -27,8 +60,6 @@ Vue.use(VueTimeago, {
     ]
   }
 })
-
-Vue.use(Vuetify)
 
 /* eslint-disable no-new */
 new Vue({

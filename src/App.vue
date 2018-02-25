@@ -10,7 +10,7 @@
         <v-layout>
           <v-flex xs12 md8 offset-md2>
             <YtForm></YtForm>
-            <Comments></Comments>
+            <YtComments></YtComments>
           </v-flex>
         </v-layout>
       </v-container>
@@ -20,12 +20,12 @@
 
 <script>
   import YtForm from '@/components/YtForm'
-  import Comments from '@/components/YtComments'
+  import YtComments from '@/components/YtComments'
 
   export default {
     components: {
       YtForm,
-      Comments
+      YtComments
     },
     computed: {
       sortedComments: function () {
