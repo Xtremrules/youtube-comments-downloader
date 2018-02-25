@@ -1,5 +1,5 @@
 language: node_js
-node_js: 6
+node_js: 8
 cache:
   yarn: true
   directories:
@@ -13,4 +13,4 @@ deploy:
   token: "$FIREBASE_TOKEN"
   skip_cleanup: true
   on:
-    branch: master
+    tags: true

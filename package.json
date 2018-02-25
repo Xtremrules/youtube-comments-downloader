@@ -14,7 +14,7 @@
     "lazysizes": "^4.0.1",
     "vue": "^2.5.9",
     "vue-timeago": "^3.4.1",
-    "vuetify": "@next",
+    "vuetify": "^1.0.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
@@ -62,8 +62,7 @@
     "webpack-merge": "^4.1.0"
   },
   "engines": {
-    "node": ">= 4.0.0",
-    "npm": ">= 3.0.0"
+    "node": ">= 8.0.0"
   },
   "browserslist": [
     "> 1%",
