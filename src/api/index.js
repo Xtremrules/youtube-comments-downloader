@@ -31,9 +31,8 @@ export default (url, params) => {
         // extract the error from the server's json
         return reject(response.json.error)
       })
-      .catch((error) => reject({
+      .catch((error) => reject({ // eslint-disable-line prefer-promise-reject-errors
         networkError: error.message
       }))
   })
 }
-
