@@ -6,37 +6,13 @@ import App from './App'
 import VueTimeago from 'vue-timeago'
 import 'lazysizes'
 
-import {
-  Vuetify,
-  VApp,
-  VAvatar,
-  VBtn,
-  VCard,
-  VDivider,
-  VForm,
-  VGrid,
-  VIcon,
-  VProgressCircular,
-  VProgressLinear,
-  VTextField,
-  VToolbar
-} from 'vuetify'
+import Vuetify from 'vuetify/es5/components/Vuetify'
+import VApp from 'vuetify/es5/components/VApp'
 
 Vue.use(Vuetify, {
   components: {
     Vuetify,
-    VApp,
-    VAvatar,
-    VBtn,
-    VCard,
-    VDivider,
-    VForm,
-    VGrid,
-    VIcon,
-    VProgressCircular,
-    VProgressLinear,
-    VTextField,
-    VToolbar
+    VApp
   }
 })
 
