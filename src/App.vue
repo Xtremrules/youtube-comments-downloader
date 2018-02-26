@@ -19,13 +19,18 @@
 </template>
 
 <script>
+  import * as VGrid from 'vuetify/es5/components/VGrid'
+  import * as VToolbar from 'vuetify/es5/components/VToolbar'
+
   import YtForm from '@/components/YtForm'
   import YtComments from '@/components/YtComments'
 
   export default {
     components: {
-      YtForm,
-      YtComments
+      ...VGrid,
+      ...VToolbar,
+      YtComments,
+      YtForm
     },
     computed: {
       sortedComments: function () {

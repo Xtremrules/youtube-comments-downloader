@@ -11,7 +11,6 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
-    "babel-plugin-transform-imports": "^1.4.1",
     "lazysizes": "^4.0.1",
     "vue": "^2.5.13",
     "vue-timeago": "^3.4.4",

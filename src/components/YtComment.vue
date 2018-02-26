@@ -52,9 +52,21 @@
 </template>
 
 <script>
+  import * as VGrid from 'vuetify/es5/components/VGrid'
+
+  import VAvatar from 'vuetify/es5/components/VAvatar'
+  import VBtn from 'vuetify/es5/components/VBtn'
+  import VIcon from 'vuetify/es5/components/VIcon'
+
   export default {
     name: 'comment',
     props: ['comment', 'isChild'],
+    components: {
+      ...VGrid,
+      VAvatar,
+      VBtn,
+      VIcon
+    },
     computed: {
       avatar () {
         return this.comment.avatar.replace(

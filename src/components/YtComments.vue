@@ -11,11 +11,11 @@
       <v-divider></v-divider>
       <v-card flat>
         <ul class="comments pa-4">
-          <Comment
+          <yt-comment
             :comment="comment"
             v-for="comment in comments"
             v-bind:key="comment.id"
-          ></Comment>
+          ></yt-comment>
         </ul>
       </v-card>
     </template>
@@ -24,11 +24,22 @@
 
 <script>
   import { mapState } from 'vuex'
-  import Comment from '@/components/YtComment'
+
+  import * as VCard from 'vuetify/es5/components/VCard'
+  import * as VGrid from 'vuetify/es5/components/VGrid'
+
+  import VDivider from 'vuetify/es5/components/VDivider'
+  import VProgressLinear from 'vuetify/es5/components/VProgressLinear'
+
+  import YtComment from '@/components/YtComment'
 
   export default {
     components: {
-      Comment
+      ...VCard,
+      ...VGrid,
+      VDivider,
+      VProgressLinear,
+      YtComment
     },
     computed: {
       progress () {

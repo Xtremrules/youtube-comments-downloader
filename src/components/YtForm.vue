@@ -68,8 +68,24 @@
 <script>
   import { mapState } from 'vuex'
 
+  import * as VGrid from 'vuetify/es5/components/VGrid'
+  import * as VCard from 'vuetify/es5/components/VCard'
+
+  import VBtn from 'vuetify/es5/components/VBtn'
+  import VForm from 'vuetify/es5/components/VForm'
+  import VProgressCircular from 'vuetify/es5/components/VProgressCircular'
+  import VTextField from 'vuetify/es5/components/VTextField'
+
   export default {
-    data  () {
+    components: {
+      ...VCard,
+      ...VGrid,
+      VBtn,
+      VForm,
+      VProgressCircular,
+      VTextField
+    },
+    data () {
       return {
         input: '',
         urlString: window.location.href
