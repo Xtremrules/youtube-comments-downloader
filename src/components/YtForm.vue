@@ -48,6 +48,9 @@
               :disabled="loading"
             >
               Fetch comments
+              <span slot="loader">
+                Loading...
+              </span>
             </v-btn>
           </v-card-actions>
         </v-card>
