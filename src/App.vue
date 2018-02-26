@@ -9,8 +9,8 @@
       <v-container grid-list-xl>
         <v-layout>
           <v-flex xs12 md8 offset-md2>
-            <YtForm></YtForm>
-            <YtComments></YtComments>
+            <yt-form></yt-form>
+            <yt-comment-list></yt-comment-list>
           </v-flex>
         </v-layout>
       </v-container>
@@ -23,21 +23,14 @@
   import * as VToolbar from 'vuetify/es5/components/VToolbar'
 
   import YtForm from '@/components/YtForm'
-  import YtComments from '@/components/YtComments'
+  import YtCommentList from '@/components/YtCommentList'
 
   export default {
     components: {
       ...VGrid,
       ...VToolbar,
-      YtComments,
+      YtCommentList,
       YtForm
-    },
-    computed: {
-      sortedComments: function () {
-        return this.comments.sort((a, b) => {
-          return b.likes - a.likes
-        })
-      }
     }
   }
 </script>

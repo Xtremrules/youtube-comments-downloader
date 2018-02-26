@@ -1,7 +1,13 @@
 <template>
   <v-form v-on:submit.prevent="onSubmit">
-    <v-layout row wrap>
-      <v-flex d-flex :class="{ 'md6': video }">
+    <v-layout
+      row
+      wrap
+    >
+      <v-flex
+        :class="{ 'md6': video }"
+        d-flex
+      >
         <v-card flat>
           <v-card-text>
             <v-text-field
@@ -12,6 +18,7 @@
               @input="updateVideoId"
               color="red"
             ></v-text-field>
+
             <p class="grey--text">
               Copy and paste YouTube URL or video ID to fetch all comments.
             </p>
@@ -19,17 +26,23 @@
         </v-card>
       </v-flex>
 
-      <v-flex v-if="video" md6 d-flex>
+      <v-flex
+        v-if="video"
+        md6
+        d-flex
+      >
         <v-card flat>
           <v-card-media
             :src="video.snippet.thumbnails.standard.url"
             height="150px"
           ></v-card-media>
+
           <v-card-title class="px-0 py-2">
             <h3 class="title mb-0">
               {{ video.snippet.title }}
             </h3>
           </v-card-title>
+
           <v-card-text class="pa-0">
             <div>
               {{ video.snippet.channelTitle }}
@@ -53,16 +66,38 @@
               </span>
             </v-btn>
           </v-card-actions>
+
         </v-card>
       </v-flex>
     </v-layout>
 
-    <div v-if="error" class="form__error">
+    <div
+      class="form__error"
+      v-if="error"
+    >
       <img src="https://media.giphy.com/media/13NRvWtOiMXawM/giphy.gif">
-      <div v-for="(item, index) in error.errors" v-bind:key="index" v-bind:item="item">
-        <p>Domain: <strong>{{ item.domain }}</strong></p>
-        <p>Message: <strong v-html="item.message"></strong></p>
-        <p>Reason: <strong>{{ item.reason }}</strong></p>
+
+      <div
+        v-for="(item, index) in error.errors"
+        :key="index"
+        :item="item"
+      >
+        <p>
+          Domain:
+          <strong>
+            {{ item.domain }}
+          </strong>
+        </p>
+        <p>
+          Message:
+          <strong v-html="item.message"></strong>
+        </p>
+        <p>
+          Reason:
+          <strong>
+            {{ item.reason }}
+          </strong>
+        </p>
       </div>
     </div>
   </v-form>

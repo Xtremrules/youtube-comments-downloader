@@ -1,6 +1,9 @@
 <template>
   <li class="comment">
-    <v-avatar class="comment__avatar grey" :size="avatarSize">
+    <v-avatar
+      class="comment__avatar grey"
+      :size="avatarSize"
+    >
       <img
         class="lazyload"
         :data-src="avatar"
@@ -14,39 +17,58 @@
         <span class="comment__author">
           {{ comment.name }}
         </span>
+
         <span class="comment__time">
           <timeago :since="comment.date"></timeago>
         </span>
       </div>
 
-      <div class="comment__text" v-html="comment.text"></div>
+      <div
+        class="comment__text"
+        v-html="comment.text"
+      ></div>
 
       <div class="comment__footer">
         <span class="comment__reply">
           Reply
         </span>
 
-        <span class="comment__count" v-if="comment.likes > 0">
+        <span
+          class="comment__count"
+          v-if="comment.likes > 0"
+        >
           {{ comment.likes }}
         </span>
 
-        <v-btn flat icon class="comment__button ma-0">
+        <v-btn
+          class="comment__button ma-0"
+          flat
+          icon
+        >
           <v-icon size="16px">thumb_up</v-icon>
         </v-btn>
 
-        <v-btn flat icon class="comment__button ma-0">
+        <v-btn
+          class="comment__button ma-0"
+          flat
+          icon
+        >
           <v-icon size="16px">thumb_down</v-icon>
         </v-btn>
       </div>
 
-      <div class="comment__child" v-if="comment.totalReplyCount > 0">
-        <comment
+      <div
+        class="comment__child"
+        v-if="comment.totalReplyCount > 0"
+      >
+        <yt-comment
           v-for="reply in replies"
           v-bind:key="reply.id"
           :comment="reply"
           isChild="true"
-        ></comment>
+        ></yt-comment>
       </div>
+
     </div>
   </li>
 </template>
@@ -59,7 +81,7 @@
   import VIcon from 'vuetify/es5/components/VIcon'
 
   export default {
-    name: 'comment',
+    name: 'yt-comment',
     props: ['comment', 'isChild'],
     components: {
       ...VGrid,

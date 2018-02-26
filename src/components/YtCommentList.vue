@@ -4,13 +4,17 @@
       <div class="text-xs-center">
         {{ commentsCount }} / {{ video.statistics.commentCount }}
       </div>
-      <v-progress-linear v-model="progress" color="red"></v-progress-linear>
+
+      <v-progress-linear
+        v-model="progress"
+        color="red"
+      ></v-progress-linear>
     </template>
 
     <template v-if="commentsCount && !loading">
       <v-divider></v-divider>
       <v-card flat>
-        <ul class="comments pa-4">
+        <ul class="comment-list pa-4">
           <yt-comment
             :comment="comment"
             v-for="comment in comments"
@@ -19,6 +23,7 @@
         </ul>
       </v-card>
     </template>
+
   </div>
 </template>
 
@@ -59,7 +64,7 @@
 </script>
 
 <style scoped>
-  .comments {
+  .comment-list {
     list-style: none;
     padding: 0;
     margin: 0;
