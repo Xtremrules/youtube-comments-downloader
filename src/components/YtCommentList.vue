@@ -13,6 +13,27 @@
 
     <template v-if="commentsCount && !loading">
       <v-divider></v-divider>
+      <v-card
+        class="mb-4 px-4 pt-2"
+        raised
+      >
+        <v-text-field
+          label="Search in comments"
+          type="search"
+          v-model="search"
+          color="red"
+          clearable
+        />
+        <p class="pb-4 grey--text">
+          The search will return threads that contain given phrase
+          <span
+            class="grey--text text--lighten-1"
+            style="float: right"
+          >
+            BETA FEATURE
+          </span>
+        </p>
+      </v-card>
       <v-card flat>
         <ul class="comment-list pa-4">
           <yt-comment
@@ -35,6 +56,7 @@
 
   import VDivider from 'vuetify/es5/components/VDivider'
   import VProgressLinear from 'vuetify/es5/components/VProgressLinear'
+  import VTextField from 'vuetify/es5/components/VTextField'
 
   import YtComment from '@/components/YtComment'
 
@@ -44,18 +66,34 @@
       ...VGrid,
       VDivider,
       VProgressLinear,
+      VTextField,
       YtComment
     },
     computed: {
+      commentsCount () {
+        return Object.keys(this.$store.state.comments).length
+      },
       progress () {
         if (this.video) {
           return this.commentsCount / this.video.statistics.commentCount * 100
         }
         return 0
       },
+      comments () {
+        if (this.search) {
+          return this.$store.getters.commentsWithText(this.search)
+        }
+        return this.$store.getters.comments()
+      },
+      search: {
+        get () {
+          return this.$store.state.search
+        },
+        set (value) {
+          this.$store.commit('search', value)
+        }
+      },
       ...mapState([
-        'comments',
-        'commentsCount',
         'loading',
         'video'
       ])

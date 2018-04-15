@@ -10,7 +10,7 @@ https://youtubecommentsdownloader.com/
 Great, let me know on [Facebook](https://www.facebook.com/iglodottech/)
 
 ## Ops, I found a bug
-Create an [Issue](https://github.com/Igloczek/youtube-comments-downloader/issues) or is you are not develper just let me know on [Facebook](https://www.facebook.com/iglodottech/).
+Create an [Issue](https://github.com/Igloczek/youtube-comments-downloader/issues) or if you are not a develper let me know on [Facebook](https://www.facebook.com/iglodottech/).
 
 ## Credits
 [Krzysztof Gonciarz](https://www.facebook.com/krzysztof.gonciarz), one of the greatest Polish Youtube creators, inspired me to start this project, was the first user and supporter.

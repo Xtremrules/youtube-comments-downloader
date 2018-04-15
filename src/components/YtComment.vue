@@ -25,7 +25,7 @@
 
       <div
         class="comment__text"
-        v-html="comment.text"
+        v-html="text"
       ></div>
 
       <div class="comment__footer">
@@ -100,9 +100,16 @@
         return this.isChild ? 24 : 40
       },
       replies () {
-        return this.comment.replies.sort((a, b) => {
-          return new Date(a.date) - new Date(b.date)
-        })
+        return this.comment.replies
+      },
+      search () {
+        return this.$store.state.search
+      },
+      text () {
+        if (this.search) {
+          return this.comment.text.replace(new RegExp(this.search, 'ig'), '<mark>$&</mark>')
+        }
+        return this.comment.text
       }
     }
   }
@@ -196,5 +203,10 @@
 
   .comment__child .comment:last-child {
     margin-bottom: 0;
+  }
+
+  mark {
+    background: orange;
+    color: black;
   }
 </style>

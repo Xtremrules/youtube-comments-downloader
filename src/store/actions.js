@@ -2,8 +2,7 @@ import request from '../api'
 
 export default {
   reset (context) {
-    context.state.comments = []
-    context.state.commentsCount = 0
+    context.commit('reset')
   },
   getVideo (context) {
     const url = new URL(context.state.api.url + 'videos')
@@ -48,7 +47,6 @@ export default {
         })
 
         if (!response.nextPageToken) {
-          context.commit('sortComments')
           context.state.loading = false
         }
       })
