@@ -150,10 +150,10 @@
           window.history.pushState(
             {},
             '',
-            `${window.location.origin}?v=${match[1]}`
+            `/?v=${match[1]}`
           )
         } else {
-          window.history.pushState({}, '', window.location.origin)
+          window.history.pushState({}, '', '/')
         }
 
         this.$store.dispatch('getVideo')

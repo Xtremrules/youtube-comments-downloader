@@ -1,4 +1,15 @@
+import Vue from 'vue'
+import striptags from 'striptags'
+import removeAccents from 'remove-accents'
+
 export default {
+  reset (state) {
+    state.comments = {}
+    state.commentList = []
+  },
+  search (state, value) {
+    state.search = value
+  },
   videoId (state, id) {
     state.videoId = id
   },
@@ -6,40 +17,37 @@ export default {
     state.video = video
   },
   comment (state, comment) {
-    state.commentsCount++
+    const data = comment.snippet.topLevelComment
 
-    state.comments.push({
-      id: comment.snippet.topLevelComment.id,
-      name: comment.snippet.topLevelComment.snippet.authorDisplayName,
-      avatar: comment.snippet.topLevelComment.snippet.authorProfileImageUrl,
-      channel: comment.snippet.topLevelComment.snippet.authorChannelUrl,
-      date: comment.snippet.topLevelComment.snippet.publishedAt,
-      likes: comment.snippet.topLevelComment.snippet.likeCount,
-      text: comment.snippet.topLevelComment.snippet.textDisplay,
+    state.commentList.push(data.id)
+
+    Vue.set(state.comments, data.id, {
+      name: data.snippet.authorDisplayName,
+      avatar: data.snippet.authorProfileImageUrl,
+      channel: data.snippet.authorChannelUrl,
+      date: data.snippet.publishedAt,
+      likes: data.snippet.likeCount,
+      text: data.snippet.textDisplay,
+      searchText: removeAccents(striptags(data.snippet.textDisplay)),
       totalReplyCount: comment.snippet.totalReplyCount,
-      replies: []
+      replyList: []
     })
   },
   commentReply (state, payload) {
-    state.commentsCount++
+    const data = payload.reply.snippet
+    const id = payload.reply.id.replace(data.parentId + '.', '')
 
-    const index = state.comments.findIndex(element => {
-      return element.id === payload.commentId
-    })
+    state.comments[data.parentId].replyList.push(id)
 
-    state.comments[index].replies.push({
-      id: payload.reply.id,
-      name: payload.reply.snippet.authorDisplayName,
-      avatar: payload.reply.snippet.authorProfileImageUrl,
-      channel: payload.reply.snippet.authorChannelUrl,
-      date: payload.reply.snippet.publishedAt,
-      likes: payload.reply.snippet.likeCount,
-      text: payload.reply.snippet.textDisplay
-    })
-  },
-  sortComments (state) {
-    state.comments = state.comments.sort((a, b) => {
-      return b.likes - a.likes
+    Vue.set(state.comments, id, {
+      parent: data.parentId,
+      name: data.authorDisplayName,
+      avatar: data.authorProfileImageUrl,
+      channel: data.authorChannelUrl,
+      date: data.publishedAt,
+      likes: data.likeCount,
+      text: data.textDisplay,
+      searchText: removeAccents(striptags(data.textDisplay))
     })
   }
 }
