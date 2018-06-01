@@ -1,22 +1,16 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
-const axios = require('axios')
-const express = require('express')
-const https = require('https')
+const { google } = require('googleapis')
 
-const httpsAgent = new https.Agent({ keepAlive: true })
-const app = express();
+const youtube = google.youtube({
+  version: 'v3',
+  auth: functions.config().youtube.key
+})
 
-const api = {
-  url: 'https://www.googleapis.com/youtube/v3/',
-  key: 'AIzaSyBtZceUHCZW1a3r93gzldAnF47BS23UgJE'
-}
-
-admin.initializeApp(functions.config().firebase)
+admin.initializeApp()
 
 function getCommentThreads(videoId, pageToken) {
   const params = {
-    key: api.key,
     videoId: videoId,
     part: 'snippet,replies',
     maxResults: 100
@@ -26,31 +20,32 @@ function getCommentThreads(videoId, pageToken) {
     params.pageToken = pageToken
   }
 
-  return axios.get(api.url + 'commentThreads', { params, httpsAgent })
+  return youtube.commentThreads.list(params)
     .then(response => {
+      const promises = []
+
       if (response.data.nextPageToken) {
-        getCommentThreads(videoId, response.data.nextPageToken)
+        promises.push(getCommentThreads(videoId, response.data.nextPageToken))
       }
 
       response.data.items.forEach(comment => {
         const commentId = comment.snippet.topLevelComment.id
 
-        admin.database().ref(`/video/${videoId}/fetchedComments`).push(commentId)
-        admin.database().ref(`/video/${videoId}/comments/${commentId}`).set(comment)
-
+        promises.push(admin.database().ref(`/video/${videoId}/fetchedComments`).push(commentId))
+        promises.push(admin.database().ref(`/video/${videoId}/comments/${commentId}`).set(comment))
+        
         if (comment.snippet.totalReplyCount > 0) {
-          admin.database().ref(`/video/${videoId}/comments/${commentId}/replies`).set({})
-          getComments(videoId, commentId)
+          promises.push(admin.database().ref(`/video/${videoId}/comments/${commentId}/replies`).remove())
+          promises.push(getComments(videoId, commentId))
         }
       })
 
-      return response
+      return Promise.all(promises)
     })
 }
 
 function getComments (videoId, commentId, pageToken) {
   const params = {
-    key: api.key,
     parentId: commentId,
     part: 'snippet',
     maxResults: 100
@@ -60,44 +55,45 @@ function getComments (videoId, commentId, pageToken) {
     params.pageToken = pageToken
   }
 
-  return axios.get(api.url + 'comments', { params, httpsAgent })
+  return youtube.comments.list(params)
     .then(response => {
+      const promises = []
+
       if (response.data.nextPageToken) {
-        getComments(commentId, response.data.nextPageToken)
+        promises.push(getComments(commentId, response.data.nextPageToken))
       }
 
       response.data.items.forEach(reply => {
         const replyId = reply.id.replace(commentId + '.', '')
-        admin.database().ref(`/video/${videoId}/fetchedComments`).push(replyId)
-        admin.database().ref(`/video/${videoId}/comments/${commentId}/replies/${replyId}`).set(reply)
+        promises.push(admin.database().ref(`/video/${videoId}/fetchedComments`).push(replyId))
+        promises.push(admin.database().ref(`/video/${videoId}/comments/${commentId}/replies/${replyId}`).set(reply))
       })
 
-      return response
+      return Promise.all(promises)
     })
 }
 
-app.get('/:id', (req, res) => {
-  const videoId = req.params.id
-
-  axios.get(api.url + 'videos', {
-    params: {
-      key: api.key,
-      id: videoId,
-      part: 'snippet,statistics'
-    },
-    httpsAgent
+function getVideo(videoId) {
+  return youtube.videos.list({
+    id: videoId,
+    part: 'snippet,statistics'
   })
     .then(response => response.data.items[0])
-    .then(video => {
-      admin.database().ref(`/video/${videoId}`).set(video)
-      return video
-    })
-    .catch(error => {
-      res.status(500).send(error)
-    })
+    .then(video => admin.database().ref(`/video/${videoId}`).update(video))
+}
 
-  getCommentThreads(videoId)
-  res.sendStatus(200)
+exports.getComments = functions.database.ref('/events/comments/{eventId}/videoId').onCreate((snapshot, context) => {
+  const videoId = snapshot.val();
+
+  return getCommentThreads(videoId)
+    .then(() => admin.database().ref(`/video/${videoId}/fetchedComments`).once('value'))
+    .then(comments => admin.database().ref(`/video/${videoId}/fetchedComments`).set(Object.keys(comments.val()).length))
+    .then(() => admin.database().ref(`/events/comments/${context.params.eventId}`).remove())
 })
 
-exports.fetchComments = functions.https.onRequest(app)
+exports.getVideo = functions.database.ref('/events/video/{eventId}/videoId').onCreate((snapshot, context) => {
+  const videoId = snapshot.val();
+  
+  return getVideo(videoId)
+    .then(() => admin.database().ref(`/events/video/${context.params.eventId}`).remove())
+})
