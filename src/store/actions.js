@@ -74,6 +74,7 @@ export default {
     request(url, params)
       .then(response => {
         if (response.nextPageToken) {
+          // TO DO - spawrdzic czemu tutaj jest tylko jeden param, bo bez ID komentarza to chyba nie moze dzialac
           context.dispatch('getComments', response.nextPageToken)
         }
 
