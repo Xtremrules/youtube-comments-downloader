@@ -1,0 +1,179 @@
+const functions = require('firebase-functions')
+const admin = require('firebase-admin')
+const { google } = require('googleapis')
+const striptags = require('striptags')
+const removeAccents = require('remove-accents')
+const express = require('express')
+const cors = require('cors')
+
+const app = express()
+app.use(cors({ origin: true }))
+
+const youtube = google.youtube({
+  version: 'v3',
+  auth: functions.config().youtube.key
+})
+
+admin.initializeApp()
+
+async function getCommentThreads(videoId, pageToken) {
+  const params = {
+    videoId: videoId,
+    part: 'snippet,replies',
+    maxResults: 100
+  }
+
+  if (pageToken) {
+    params.pageToken = pageToken
+  }
+
+  await youtube.commentThreads.list(params)
+    .then(response => {
+      const promises = []
+
+      if (response.data.nextPageToken) {
+        promises.push(getCommentThreads(videoId, response.data.nextPageToken))
+      }
+
+      response.data.items.forEach(comment => {
+        const commentId = comment.snippet.topLevelComment.id
+
+        promises.push(saveComment(videoId, comment))
+
+        if (comment.snippet.totalReplyCount > 0) {
+          promises.push(getComments(videoId, commentId))
+        }
+      })
+
+      return Promise.all(promises)
+    })
+}
+
+async function getComments (videoId, commentId, pageToken) {
+  const params = {
+    parentId: commentId,
+    part: 'snippet',
+    maxResults: 100
+  }
+
+  if (pageToken) {
+    params.pageToken = pageToken
+  }
+
+  await youtube.comments.list(params)
+    .then(response => {
+      const promises = []
+
+      if (response.data.nextPageToken) {
+        promises.push(getComments(commentId, response.data.nextPageToken))
+      }
+
+      response.data.items.forEach(reply => {
+        const replyId = reply.id.replace(commentId + '.', '')
+        promises.push(saveReply(videoId, commentId, reply))
+      })
+
+      return Promise.all(promises)
+    })
+}
+
+async function saveComment(videoId, comment) {
+  const commentId = comment.snippet.topLevelComment.id
+  const topLevelComment = comment.snippet.topLevelComment.snippet
+
+  await admin.database().ref(`/video/${videoId}/comments/${commentId}`)
+    .set({
+      name: topLevelComment.authorDisplayName,
+      avatar: topLevelComment.authorProfileImageUrl,
+      channel: topLevelComment.authorChannelUrl,
+      date: topLevelComment.publishedAt,
+      likes: topLevelComment.likeCount,
+      text: topLevelComment.textDisplay,
+      searchText: removeAccents(striptags(topLevelComment.textDisplay)),
+      totalReplyCount: comment.snippet.totalReplyCount
+    })
+}
+
+async function saveReply(videoId, commentId, reply) {
+  const replyId = reply.id.replace(commentId + '.', '')
+  reply = reply.snippet
+
+  await admin.database().ref(`/video/${videoId}/comments/${commentId}/replies/${replyId}`)
+    .set({
+      parent: reply.parentId,
+      name: reply.authorDisplayName,
+      avatar: reply.authorProfileImageUrl,
+      channel: reply.authorChannelUrl,
+      date: reply.publishedAt,
+      likes: reply.likeCount,
+      text: reply.textDisplay,
+      searchText: removeAccents(striptags(reply.textDisplay))
+    })
+}
+
+async function getVideo(videoId) {
+  const response = await youtube.videos.list({
+    id: videoId,
+    part: 'snippet,statistics'
+  })
+
+  const details = {
+    ...response.data.items[0].snippet,
+    ...response.data.items[0].statistics
+  }
+
+  await admin.database().ref(`/video/${videoId}/details`).update(details)
+
+  return details
+}
+
+async function getCurrentCommentsCount(videoId) {
+  const comments = await admin.database()
+    .ref(`/video/${videoId}/comments`).once('value')
+    .then(comments => comments.val() || false)
+
+  if (comments) {
+    await admin.database().ref(`/video/${videoId}/details`).update({
+      currentCommentsCount: Object.values(comments).reduce((count, item) => {
+        return item.replies ? count += Object.keys(item.replies).length + 1 : count += 1
+      }, 0)
+    })
+  }
+}
+
+app.get('/:id', async (req, res) => {
+  res.send(await getVideo(req.params.id))
+})
+
+exports.getVideo = functions.https.onRequest(app);
+
+exports.checkIfIsCurrent = functions.database.ref('/video/{videoId}/details/commentCount').onWrite(
+  async (change, context) => {
+    const videoId = context.params.videoId
+    const commentCount = change.after.val() || false
+
+    if (commentCount) {
+      const currentCommentsCount = await admin.database()
+        .ref(`/video/${videoId}/details/currentCommentsCount`).once('value')
+        .then(response => response.val() || 0)
+
+      await admin.database().ref(`/video/${videoId}/details`).update({
+        isCurrent: parseInt(commentCount) <= parseInt(currentCommentsCount)
+      })
+    }
+  }
+)
+
+exports.getComments = functions.database.ref('/video/{videoId}/details/isCurrent').onWrite(
+  async (change, context) => {
+    const videoId = context.params.videoId
+    const isCurrent = change.after.val()
+
+    if (isCurrent === false) {
+      await admin.database().ref(`/video/${videoId}/comments`).remove()
+      await getCommentThreads(videoId)
+      await getCurrentCommentsCount(videoId)
+      await admin.database().ref(`/video/${videoId}/details`).update({ isCurrent: true })
+    }
+  }
+)
