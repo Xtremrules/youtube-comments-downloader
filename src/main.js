@@ -1,10 +1,12 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
+import VueTimeago from 'vue-timeago'
+import firebase from 'firebase/app'
+import 'lazysizes'
+
 import store from './store'
 import App from './App'
-import VueTimeago from 'vue-timeago'
-import 'lazysizes'
 
 import Vuetify from 'vuetify/es5/components/Vuetify'
 import VApp from 'vuetify/es5/components/VApp'
@@ -42,5 +44,15 @@ new Vue({
   el: '#app',
   store,
   template: '<App/>',
-  components: { App }
+  components: { App },
+  created () {
+    firebase.initializeApp({
+      apiKey: 'AIzaSyBonqknJcTB4DcQmfTdipXXXzDpEXHZo0g',
+      authDomain: 'comments-downloader.firebaseapp.com',
+      databaseURL: 'https://comments-downloader.firebaseio.com',
+      projectId: 'comments-downloader',
+      storageBucket: 'comments-downloader.appspot.com',
+      messagingSenderId: '764770048899'
+    })
+  }
 })

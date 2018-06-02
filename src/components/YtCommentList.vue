@@ -1,14 +1,22 @@
 <template>
   <div class="mt-4">
     <template v-if="loading">
-      <div class="text-xs-center">
-        {{ commentsCount }} / {{ video.statistics.commentCount }}
-      </div>
+      <template v-if="video.commentCount > 10000">
+        <h2>
+          {{ video.commentCount }} comments is quite a lot...
+        </h2>
+        <p>
+          Our team of highly trained monkeys are working hard processing this request.
+        </p>
+        <p>
+          It will take about {{ Math.ceil(video.commentCount * 4 / 1000 / 60)  }} minutes
+        </p>
+      </template>
 
       <v-progress-linear
-        v-model="progress"
+        :indeterminate="true"
         color="red"
-      ></v-progress-linear>
+      />
     </template>
 
     <template v-if="commentsCount && !loading">
@@ -44,7 +52,6 @@
         </ul>
       </v-card>
     </template>
-
   </div>
 </template>
 
@@ -71,19 +78,13 @@
     },
     computed: {
       commentsCount () {
-        return Object.keys(this.$store.state.comments).length
-      },
-      progress () {
-        if (this.video) {
-          return this.commentsCount / this.video.statistics.commentCount * 100
-        }
-        return 0
+        return this.$store.state.comments && Object.keys(this.$store.state.comments).length
       },
       comments () {
         if (this.search) {
           return this.$store.getters.commentsWithText(this.search)
         }
-        return this.$store.getters.comments()
+        return this.$store.getters.comments
       },
       search: {
         get () {

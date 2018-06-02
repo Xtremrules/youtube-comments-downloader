@@ -33,22 +33,22 @@
       >
         <v-card flat>
           <v-card-media
-            :src="video.snippet.thumbnails.standard.url"
+            :src="video.thumbnails.standard.url"
             height="150px"
           ></v-card-media>
 
           <v-card-title class="px-0 py-2">
             <h3 class="title mb-0">
-              {{ video.snippet.title }}
+              {{ video.title }}
             </h3>
           </v-card-title>
 
           <v-card-text class="pa-0">
             <div>
-              {{ video.snippet.channelTitle }}
+              {{ video.channelTitle }}
             </div>
             <div>
-              {{ video.statistics.commentCount }} comments
+              {{ video.commentCount }} comments
             </div>
           </v-card-text>
 

@@ -1,93 +1,33 @@
-import request from '../api'
+import axios from 'axios'
+import firebase from 'firebase/app'
+import 'firebase/database'
+
+const GET_VIDEO = 'https://us-central1-comments-downloader.cloudfunctions.net/getVideo'
 
 export default {
   reset (context) {
     context.commit('reset')
   },
-  getVideo (context) {
-    const url = new URL(context.state.api.url + 'videos')
-    const params = {
-      key: context.state.api.key,
-      id: context.state.videoId,
-      part: 'snippet,statistics'
-    }
+  async getVideo (context) {
+    const videoId = context.state.videoId
 
-    request(url, params)
-      .then(response => {
-        context.commit('video', response.items[0])
-      })
+    if (videoId) {
+      context.commit('video', await axios.get(`${GET_VIDEO}/${videoId}`).then(response => response.data))
+    }
   },
-  getCommentThreads (context, pageToken) {
-    const url = new URL(context.state.api.url + 'commentThreads')
-    const params = {
-      key: context.state.api.key,
-      videoId: context.state.videoId,
-      part: 'snippet,replies',
-      maxResults: 100
-    }
+  async getCommentThreads (context) {
+    const videoId = context.state.videoId
+    context.commit('loading', true)
 
-    if (pageToken) {
-      params.pageToken = pageToken
-    }
+    await firebase.database().ref(`/video/${videoId}/details/isCurrent`).on('value', async snapshot => {
+      const isCurrent = snapshot.val()
 
-    context.state.loading = true
-
-    request(url, params)
-      .then(response => {
-        if (response.nextPageToken) {
-          context.dispatch('getCommentThreads', response.nextPageToken)
-        }
-
-        response.items.forEach(comment => {
-          context.commit('comment', comment)
-
-          if (comment.snippet.totalReplyCount > 0) {
-            context.dispatch('getComments', comment.snippet.topLevelComment.id)
-          }
-        })
-
-        if (!response.nextPageToken) {
-          context.state.loading = false
-        }
-      })
-      .catch(error => {
-        context.state.loading = false
-        context.state.error = error
-        return {
-          items: []
-        }
-      })
-  },
-  getComments (context, commentId, pageToken) {
-    const url = new URL(context.state.api.url + 'comments')
-    const params = {
-      key: context.state.api.key,
-      parentId: commentId,
-      part: 'snippet',
-      maxResults: 100
-    }
-
-    if (pageToken) {
-      params.pageToken = pageToken
-    }
-
-    request(url, params)
-      .then(response => {
-        if (response.nextPageToken) {
-          // TO DO - spawrdzic czemu tutaj jest tylko jeden param, bo bez ID komentarza to chyba nie moze dzialac
-          context.dispatch('getComments', response.nextPageToken)
-        }
-
-        response.items.forEach(reply => {
-          context.commit('commentReply', { commentId, reply })
-        })
-      })
-      .catch(error => {
-        context.state.loading = false
-        context.state.error = error
-        return {
-          items: []
-        }
-      })
+      if (isCurrent) {
+        await firebase.database().ref(`/video/${videoId}/details/isCurrent`).off()
+        const comments = await firebase.database().ref(`/video/${videoId}/comments`).once('value')
+        context.commit('comments', comments.val())
+        context.commit('loading', false)
+      }
+    })
   }
 }
