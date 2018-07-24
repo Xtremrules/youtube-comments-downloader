@@ -1,13 +1,21 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import store from './store'
-import App from './App'
+import Raven from 'raven-js'
+import RavenVue from 'raven-js/plugins/vue'
 import VueTimeago from 'vue-timeago'
 import 'lazysizes'
 
+import store from './store'
+import App from './App'
+
 import Vuetify from 'vuetify/es5/components/Vuetify'
 import VApp from 'vuetify/es5/components/VApp'
+
+Raven
+  .config('https://b65ddccb9c594cbcb1d6a114d7d9d5c4@sentry.io/152451')
+  .addPlugin(RavenVue, Vue)
+  .install()
 
 Vue.use(Vuetify, {
   components: {
