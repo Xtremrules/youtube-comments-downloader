@@ -12,6 +12,7 @@ export default {
       part: 'snippet,statistics'
     }
 
+    return request(url, params)
       .then(response => {
         context.commit('video', response.items[0])
       })
@@ -31,6 +32,7 @@ export default {
 
     context.state.loading = true
 
+    return request(url, params)
       .then(response => {
         if (response.nextPageToken) {
           context.dispatch('getCommentThreads', response.nextPageToken)
@@ -70,6 +72,7 @@ export default {
       params.pageToken = pageToken
     }
 
+    return request(url, params)
       .then(response => {
         if (response.nextPageToken) {
           context.dispatch('getComments', response.nextPageToken)
