@@ -12,7 +12,6 @@ export default {
       part: 'snippet,statistics'
     }
 
-    request(url, params)
       .then(response => {
         context.commit('video', response.items[0])
       })
@@ -32,7 +31,6 @@ export default {
 
     context.state.loading = true
 
-    request(url, params)
       .then(response => {
         if (response.nextPageToken) {
           context.dispatch('getCommentThreads', response.nextPageToken)
@@ -52,9 +50,10 @@ export default {
       })
       .catch(error => {
         context.state.loading = false
-        context.state.error = error
-        return {
-          items: []
+        context.state.error = {
+          videoId: params.videoId,
+          pageToken: pageToken || false,
+          ...error
         }
       })
   },
@@ -71,7 +70,6 @@ export default {
       params.pageToken = pageToken
     }
 
-    request(url, params)
       .then(response => {
         if (response.nextPageToken) {
           context.dispatch('getComments', response.nextPageToken)
@@ -83,9 +81,11 @@ export default {
       })
       .catch(error => {
         context.state.loading = false
-        context.state.error = error
-        return {
-          items: []
+        context.state.error = {
+          videoId: params.videoId,
+          commentId,
+          pageToken: pageToken || false,
+          ...error
         }
       })
   }
