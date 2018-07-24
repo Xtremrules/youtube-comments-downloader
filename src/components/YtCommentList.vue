@@ -69,6 +69,11 @@
       VTextField,
       YtComment
     },
+    data () {
+      return {
+        comments: []
+      }
+    },
     computed: {
       commentsCount () {
         return Object.keys(this.$store.state.comments).length
@@ -79,7 +84,7 @@
         }
         return 0
       },
-      comments () {
+      fetchedComments () {
         if (this.search) {
           return this.$store.getters.commentsWithText(this.search)
         }
@@ -97,6 +102,28 @@
         'loading',
         'video'
       ])
+    },
+    methods: {
+      renderComments () {
+        let comments = this.fetchedComments
+        let count = comments.length
+
+        while (count > 0) {
+          const qty = count >= 100 ? 100 : count
+          count -= qty
+          this.comments.push(...comments.splice(0, qty))
+        }
+      }
+    },
+    watch: {
+      loading (loading) {
+        if (!loading) {
+          this.renderComments()
+        }
+      },
+      video () {
+        this.comments = []
+      }
     }
   }
 </script>
